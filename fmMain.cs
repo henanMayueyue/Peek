@@ -4,16 +4,16 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Peek
-{
-  public partial class fmMain : Form
-  {
+namespace Peek {
+  public partial class fmMain : Form {
     string filepath = "";
     List<string> files = new List<string>();
     Image image = null;
 
-    public fmMain(string[] args)
-    {
+    /// <summary>
+    /// Constructor.
+    /// </summary>
+    public fmMain(string[] args) {
       if (args.Length > 0)
         for (int i = 0; i < args.Length; i++)
           this.filepath += args[i] + (i < (args.Length - 1) ? " " : "");
@@ -21,10 +21,11 @@ namespace Peek
       InitializeComponent();
     }
 
-    private void fmMain_KeyDown(object sender, KeyEventArgs e)
-    {
-      switch (e.KeyCode)
-      {
+    /// <summary>
+    /// Implements event_KeyDown().
+    /// </summary>
+    private void fmMain_KeyDown(object sender, KeyEventArgs e) {
+      switch (e.KeyCode) {
         case Keys.Left:
           this.selectPreviousFile();
           break;
@@ -47,73 +48,87 @@ namespace Peek
           break;
       }
     }
-    private void fmMain_Load(object sender, EventArgs e)
-    {
+
+    /// <summary>
+    /// Implements event_Load().
+    /// </summary>
+    private void fmMain_Load(object sender, EventArgs e) {
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
 
+      int screenHeight = 0;
+      int screenLeft = 0;
+      int screenTop = 0;
+      int screenWidth = 0;
+
+      foreach (Screen screen in Screen.AllScreens) {
+        if (MousePosition.X >= screen.Bounds.Left &&
+            MousePosition.X <= (screen.Bounds.Left + screen.Bounds.Width) &&
+            MousePosition.Y >= screen.Bounds.Top &&
+            MousePosition.Y <= (screen.Bounds.Top + screen.Bounds.Height)) {
+              screenHeight = screen.Bounds.Height;
+              screenLeft = screen.Bounds.Left;
+              screenTop = screen.Bounds.Top;
+              screenWidth = screen.Bounds.Width;
+
+              break;
+        }
+      }
+
       this.Location = new Point(
-        Screen.PrimaryScreen.Bounds.Left,
-        Screen.PrimaryScreen.Bounds.Top);
+        screenLeft,
+        screenTop);
 
       this.Size = new Size(
-        Screen.PrimaryScreen.Bounds.Width,
-        Screen.PrimaryScreen.Bounds.Height);
+        screenWidth,
+        screenHeight);
 
       this.loadImageFromArguments();
     }
 
-    private void deleteFile()
-    {
-      if (this.files.Count > 0)
-      {
+    /// <summary>
+    /// Moves the selected file to the Recyclin Bin.
+    /// </summary>
+    private void deleteFile() {
+      if (this.files.Count > 0) {
         int position = -1;
 
-        // Save current position in this.files().
-        for (int i = 0; i < this.files.Count; i++)
-        {
-          if (this.files[i] == this.filepath)
-          {
+        for (int i = 0; i < this.files.Count; i++) {
+          if (this.files[i] == this.filepath) {
             position = i;
             break;
           }
         }
 
-        if (position > -1)
-        {
-          // Remove file from this.files().
+        if (position > -1) {
           this.files.RemoveAt(position);
 
-          // Hide and unset the variable.
           this.pbImage.Visible = false;
 
           this.image.Dispose();
           this.image = null;
 
-          // Send file to Recycle Bin.
-          try
-          {
+          try {
             FileIO.MoveToRecycleBin(this.filepath);
           }
-          catch (Exception ex)
-          {
+          catch (Exception ex) {
             MessageBox.Show(ex.Message);
           }
 
-          // Set this.filepath to string of same position in this.files(), which would be the next file.
           if (position == this.files.Count)
             position = 0;
 
           this.filepath = this.files[position];
 
-          // Invoke loadImageFromArguments().
           this.loadImageFromArguments();
         }
       }
     }
-    private void loadImageFromArguments()
-    {
-      if (string.IsNullOrWhiteSpace(this.filepath))
-      {
+
+    /// <summary>
+    /// Load and display the image stored in the global filepath.
+    /// </summary>
+    private void loadImageFromArguments() {
+      if (string.IsNullOrWhiteSpace(this.filepath)) {
         Application.Exit();
         return;
       }
@@ -121,8 +136,7 @@ namespace Peek
       if (this.files.Count == 0)
         this.scanForImageFiles();
 
-      try
-      {
+      try {
         this.image = Image.FromFile(this.filepath);
 
         string filename = this.filepath.Substring(this.filepath.LastIndexOf(@"\") + 1);
@@ -136,42 +150,35 @@ namespace Peek
         int setWidth = 0;
 
         if (imageHeight > this.ClientSize.Height ||
-            imageWidth > this.ClientSize.Width)
-        {
+            imageWidth > this.ClientSize.Width) {
           if (imageHeight > this.ClientSize.Height &&
-              imageWidth > this.ClientSize.Width)
-          {
+              imageWidth > this.ClientSize.Width) {
             decimal percentHeight = (((decimal)100 / (decimal)imageHeight) * (decimal)this.ClientSize.Height) / (decimal)100;
             decimal percentWidth = (((decimal)100 / (decimal)imageWidth) * (decimal)this.ClientSize.Width) / (decimal)100;
 
-            if (percentWidth < percentHeight)
-            {
+            if (percentWidth < percentHeight) {
               setHeight = (int)((decimal)imageHeight * percentWidth);
               setWidth = this.ClientSize.Width;
             }
-            else
-            {
+            else {
               setHeight = this.ClientSize.Height;
               setWidth = (int)((decimal)imageWidth * percentHeight);
             }
           }
-          else if (imageHeight > this.ClientSize.Height)
-          {
+          else if (imageHeight > this.ClientSize.Height) {
             decimal percent = (((decimal)100 / (decimal)imageHeight) * (decimal)this.ClientSize.Height) / (decimal)100;
 
             setHeight = this.ClientSize.Height;
             setWidth = (int)((decimal)imageWidth * percent);
           }
-          else // Width.
-          {
+          else {
             decimal percent = (((decimal)100 / (decimal)imageWidth) * (decimal)this.ClientSize.Width) / (decimal)100;
 
             setHeight = (int)((decimal)imageHeight * percent);
             setWidth = this.ClientSize.Width;
           }
         }
-        else
-        {
+        else {
           setHeight = imageHeight;
           setWidth = imageWidth;
         }
@@ -190,8 +197,7 @@ namespace Peek
           " (" + imageWidth.ToString() + "x" + imageHeight.ToString() + ")" +
           " - Peek";
       }
-      catch (Exception ex)
-      {
+      catch (Exception ex) {
         MessageBox.Show(
           ex.Message,
           "Error",
@@ -199,17 +205,17 @@ namespace Peek
           MessageBoxIcon.Error);
       }
     }
-    private void scanForImageFiles()
-    {
 
+    /// <summary>
+    /// Scan the folder of the given file to make it possible to navigate the folder.
+    /// </summary>
+    private void scanForImageFiles() {
       string path = this.filepath.Substring(0, this.filepath.LastIndexOf(@"\"));
 
-      if (Directory.Exists(path))
-      {
+      if (Directory.Exists(path)) {
         List<string> extensions = new List<string>() { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp" };
 
-        for (int i = 0; i < extensions.Count; i++)
-        {
+        for (int i = 0; i < extensions.Count; i++) {
           string[] temp = Directory.GetFiles(path, extensions[i], SearchOption.TopDirectoryOnly);
 
           for (int j = 0; j < temp.Length; j++)
@@ -219,16 +225,16 @@ namespace Peek
         this.files.Sort();
       }
     }
-    private void selectNextFile()
-    {
+
+    /// <summary>
+    /// Activate the next file in the folder.
+    /// </summary>
+    private void selectNextFile() {
       string temp = "";
 
-      if (this.files.Count > 0)
-      {
-        for (int i = 0; i < this.files.Count; i++)
-        {
-          if (this.files[i] == this.filepath)
-          {
+      if (this.files.Count > 0) {
+        for (int i = 0; i < this.files.Count; i++) {
+          if (this.files[i] == this.filepath) {
             if (i == (this.files.Count - 1))
               temp = this.files[0];
             else
@@ -240,22 +246,21 @@ namespace Peek
       }
 
       if (temp != "" &&
-          temp != this.filepath)
-      {
+          temp != this.filepath) {
         this.filepath = temp;
         this.loadImageFromArguments();
       }
     }
-    private void selectPreviousFile()
-    {
+
+    /// <summary>
+    /// Activate the previous file in the folder.
+    /// </summary>
+    private void selectPreviousFile() {
       string temp = "";
 
-      if (this.files.Count > 0)
-      {
-        for (int i = 0; i < this.files.Count; i++)
-        {
-          if (this.files[i] == this.filepath)
-          {
+      if (this.files.Count > 0) {
+        for (int i = 0; i < this.files.Count; i++) {
+          if (this.files[i] == this.filepath) {
             if (i == 0)
               temp = this.files[this.files.Count - 1];
             else
@@ -267,8 +272,7 @@ namespace Peek
       }
 
       if (temp != "" &&
-          temp != this.filepath)
-      {
+          temp != this.filepath) {
         this.filepath = temp;
         this.loadImageFromArguments();
       }
