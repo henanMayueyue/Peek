@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 
 namespace Peek {
@@ -213,10 +214,10 @@ namespace Peek {
       string path = this.filepath.Substring(0, this.filepath.LastIndexOf(@"\"));
 
       if (Directory.Exists(path)) {
-        List<string> extensions = new List<string>() { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.bmp" };
+        List<string> extensions = "png,jpg,jpe,jpeg,gif,bmp,tif,tiff,ico,cur".Split(new char[] { ',' }).ToList();
 
         for (int i = 0; i < extensions.Count; i++) {
-          string[] temp = Directory.GetFiles(path, extensions[i], SearchOption.TopDirectoryOnly);
+          string[] temp = Directory.GetFiles(path, "*." + extensions[i], SearchOption.TopDirectoryOnly);
 
           for (int j = 0; j < temp.Length; j++)
             this.files.Add(temp[j]);
