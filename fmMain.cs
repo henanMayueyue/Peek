@@ -65,10 +65,10 @@ namespace Peek {
             MousePosition.X <= (screen.Bounds.Left + screen.Bounds.Width) &&
             MousePosition.Y >= screen.Bounds.Top &&
             MousePosition.Y <= (screen.Bounds.Top + screen.Bounds.Height)) {
-              screenHeight = screen.Bounds.Height;
-              screenLeft = screen.Bounds.Left;
-              screenTop = screen.Bounds.Top;
-              screenWidth = screen.Bounds.Width;
+              screenHeight = screen.WorkingArea.Height;
+              screenLeft = screen.WorkingArea.Left;
+              screenTop = screen.WorkingArea.Top;
+              screenWidth = screen.WorkingArea.Width;
 
               break;
         }
