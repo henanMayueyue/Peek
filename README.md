@@ -17,4 +17,16 @@ Possible key-combos are:
 * 0 (the number zero) - Select the screen where the mouse pointer is. (default)
 * O (the letter o) - Toggle viewing of original size of image or scaled version.
 
+Right-click to open up a task menu where you can:
+
+* Open the active image with another program.
+* Toggle full screen.
+* Toggle original size.
+* Show the about dialog.
+* Exit the application.
+
+The icon for the program is fetched from [Itzik Gur](http://www.iconarchive.com/artist/itzikgur.html)'s IconArchive page.
+
+Peek is released under the [MIT License](http://en.wikipedia.org/wiki/MIT_License).
+
 Happy viewing...
