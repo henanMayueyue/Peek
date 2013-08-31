@@ -29,6 +29,7 @@
       this.pbImage.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
       this.pbImage.TabIndex = 0;
       this.pbImage.TabStop = false;
+      this.pbImage.Visible = false;
       // 
       // fmMain
       // 
@@ -40,8 +41,8 @@
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "fmMain";
       this.Text = "fmMain";
-      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fmMain_KeyDown);
       this.Load += new System.EventHandler(this.fmMain_Load);
+      this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fmMain_KeyDown);
       ((System.ComponentModel.ISupportInitialize)(this.pbImage)).EndInit();
       this.ResumeLayout(false);
 
