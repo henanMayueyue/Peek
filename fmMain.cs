@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
@@ -13,6 +14,8 @@ namespace Peek {
     Image image = null;
     int offsetX = 0;
     int offsetY = 0;
+    string openWithDirectory = "";
+    string openWithFile = "";
     bool originalSize = false;
     int screenIndex = 0;
 
@@ -78,7 +81,14 @@ namespace Peek {
           this.screenIndex = (int)e.KeyCode;
           this.setWindowSize();
           break;
+
+        case Keys.Apps:
+          this.cmRightClick.Show(
+            this.PointToClient(Cursor.Position));
+          break;
       }
+
+      this.Text = e.KeyCode.ToString();
     }
 
     /// <summary>
@@ -169,7 +179,7 @@ namespace Peek {
     /// <summary>
     /// Load and display the image stored in the global filepath.
     /// </summary>
-    private void loadImageFromArguments() {
+    private void loadImageFromArguments(bool load = true) {
       if (string.IsNullOrWhiteSpace(this.filepath)) {
         Application.Exit();
         return;
@@ -179,7 +189,8 @@ namespace Peek {
         this.scanForImageFiles();
 
       try {
-        this.image = Image.FromFile(this.filepath);
+        if (load)
+          this.image = Image.FromFile(this.filepath);
 
         string filename = this.filepath.Substring(this.filepath.LastIndexOf(@"\") + 1);
 
@@ -401,7 +412,60 @@ namespace Peek {
     /// </summary>
     private void toggleOriginalSize() {
       this.originalSize = !this.originalSize;
-      this.loadImageFromArguments();
+      this.loadImageFromArguments(false);
+    }
+
+    /// <summary>
+    /// Implements event_Click().
+    /// </summary>
+    private void openWithToolStripMenuItem_Click(object sender, EventArgs e) {
+      OpenFileDialog dialog = new OpenFileDialog() {
+        FileName = this.openWithFile,
+        InitialDirectory = this.openWithDirectory,
+        Multiselect = false
+      };
+
+      if (dialog.ShowDialog(this) == System.Windows.Forms.DialogResult.OK) {
+        this.openWithDirectory = dialog.FileName.Substring(0, dialog.FileName.LastIndexOf(@"\"));
+        this.openWithFile = dialog.FileName.Substring(dialog.FileName.LastIndexOf(@"\") + 1);
+
+        Process.Start(
+          new ProcessStartInfo(
+            dialog.FileName,
+            this.filepath));
+      }
+    }
+
+    /// <summary>
+    /// Implements event_Click().
+    /// </summary>
+    private void toggleFullScreenToolStripMenuItem_Click(object sender, EventArgs e) {
+      this.toggleFullScreen();
+    }
+
+    /// <summary>
+    /// Implements event_Click().
+    /// </summary>
+    private void toggleOriginalSizeToolStripMenuItem_Click(object sender, EventArgs e) {
+      this.toggleOriginalSize();
+    }
+
+    /// <summary>
+    /// Implements event_Click().
+    /// </summary>
+    private void aboutPeekToolStripMenuItem_Click(object sender, EventArgs e) {
+      MessageBox.Show(
+        "Peek",
+        "About",
+        MessageBoxButtons.OK,
+        MessageBoxIcon.Information);
+    }
+
+    /// <summary>
+    /// Implements event_Click().
+    /// </summary>
+    private void exitToolStripMenuItem_Click(object sender, EventArgs e) {
+      Application.Exit();
     }
   }
 }
