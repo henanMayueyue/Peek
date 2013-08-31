@@ -14,6 +14,7 @@ Possible key-combos are:
 * Ctrl+W/Q/Escape - Quits the application.
 * Alt+Enter/F - Toggles fullscreen/windowed viewing.
 * 1/2/3/4/5/6/7/8/9 - Selects the screen with that index.
-* 0 - Select the screen where the mouse pointer is. (default)
+* 0 (the number zero) - Select the screen where the mouse pointer is. (default)
+* O (the letter o) - Toggle viewing of original size of image or scaled version.
 
 Happy viewing...
