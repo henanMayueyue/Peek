@@ -11,6 +11,7 @@ namespace Peek {
     List<string> files = new List<string>();
     bool fullScreen = false;
     Image image = null;
+    bool originalSize = false;
     int screenIndex = 0;
 
     /// <summary>
@@ -56,6 +57,10 @@ namespace Peek {
 
         case Keys.F:
           this.toggleFullScreen();
+          break;
+
+        case Keys.O:
+          this.toggleOriginalSize();
           break;
 
         case Keys.D0:
@@ -181,6 +186,11 @@ namespace Peek {
         else {
           setHeight = imageHeight;
           setWidth = imageWidth;
+        }
+
+        if (this.originalSize) {
+          setHeight = image.Height;
+          setWidth = image.Width;
         }
 
         setLeft = (this.ClientSize.Width - setWidth) / 2;
@@ -347,6 +357,14 @@ namespace Peek {
     private void toggleFullScreen() {
       this.fullScreen = !this.fullScreen;
       this.setWindowSize();
+    }
+
+    /// <summary>
+    /// Toggles between original size and scaled on the image preview.
+    /// </summary>
+    private void toggleOriginalSize() {
+      this.originalSize = !this.originalSize;
+      this.loadImageFromArguments();
     }
   }
 }
