@@ -11,6 +11,7 @@ namespace Peek {
     List<string> files = new List<string>();
     bool fullScreen = false;
     Image image = null;
+    int screenIndex = 0;
 
     /// <summary>
     /// Constructor.
@@ -55,6 +56,19 @@ namespace Peek {
 
         case Keys.F:
           this.toggleFullScreen();
+          break;
+
+        case Keys.D1:
+        case Keys.D2:
+        case Keys.D3:
+        case Keys.D4:
+        case Keys.D5:
+        case Keys.D6:
+        case Keys.D7:
+        case Keys.D8:
+        case Keys.D9:
+          this.screenIndex = (int)e.KeyCode;
+          this.setWindowSize();
           break;
       }
     }
@@ -268,29 +282,48 @@ namespace Peek {
       int screenLeft = 0;
       int screenTop = 0;
       int screenWidth = 0;
+      Screen screen = null;
 
-      foreach (Screen screen in Screen.AllScreens)
-      {
-        if (MousePosition.X >= screen.Bounds.Left &&
-            MousePosition.X <= (screen.Bounds.Left + screen.Bounds.Width) &&
-            MousePosition.Y >= screen.Bounds.Top &&
-            MousePosition.Y <= (screen.Bounds.Top + screen.Bounds.Height))
-        {
-          if (this.fullScreen) {
-            screenHeight = screen.Bounds.Height;
-            screenLeft = screen.Bounds.Left;
-            screenTop = screen.Bounds.Top;
-            screenWidth = screen.Bounds.Width;
-          }
-          else {
-            screenHeight = screen.WorkingArea.Height;
-            screenLeft = screen.WorkingArea.Left;
-            screenTop = screen.WorkingArea.Top;
-            screenWidth = screen.WorkingArea.Width;
-          }
+      if (this.screenIndex > 0)
+        if ((this.screenIndex - 1) <= Screen.AllScreens.Length)
+          screen = Screen.AllScreens[this.screenIndex - 1];
 
-          break;
+      if (screen == null) {
+        foreach (Screen scr in Screen.AllScreens) {
+          if (MousePosition.X >= scr.Bounds.Left &&
+              MousePosition.X <= (scr.Bounds.Left + scr.Bounds.Width) &&
+              MousePosition.Y >= scr.Bounds.Top &&
+              MousePosition.Y <= (scr.Bounds.Top + scr.Bounds.Height)) {
+                screen = scr;
+                break;
+          }
         }
+      }
+
+      if (screen != null) {
+        if (this.fullScreen) {
+          screenHeight = screen.Bounds.Height;
+          screenLeft = screen.Bounds.Left;
+          screenTop = screen.Bounds.Top;
+          screenWidth = screen.Bounds.Width;
+        }
+        else {
+          screenHeight = screen.WorkingArea.Height;
+          screenLeft = screen.WorkingArea.Left;
+          screenTop = screen.WorkingArea.Top;
+          screenWidth = screen.WorkingArea.Width;
+        }
+      }
+
+      if (screenHeight == 0) {
+        MessageBox.Show(
+          "Unable to locate screen to render too! This really should not happen and is most likely a bug.",
+          "Error",
+          MessageBoxButtons.OK,
+          MessageBoxIcon.Error
+          );
+
+        Application.Exit();
       }
 
       this.Location = new Point(
