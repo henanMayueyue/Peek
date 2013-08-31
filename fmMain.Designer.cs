@@ -30,6 +30,9 @@
       this.pbImage.TabIndex = 0;
       this.pbImage.TabStop = false;
       this.pbImage.Visible = false;
+      this.pbImage.MouseDown += new System.Windows.Forms.MouseEventHandler(this.pbImage_MouseDown);
+      this.pbImage.MouseMove += new System.Windows.Forms.MouseEventHandler(this.pbImage_MouseMove);
+      this.pbImage.MouseUp += new System.Windows.Forms.MouseEventHandler(this.pbImage_MouseUp);
       // 
       // fmMain
       // 
@@ -41,8 +44,8 @@
       this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
       this.Name = "fmMain";
       this.Text = "fmMain";
-      this.Load += new System.EventHandler(this.fmMain_Load);
       this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.fmMain_KeyDown);
+      this.Load += new System.EventHandler(this.fmMain_Load);
       ((System.ComponentModel.ISupportInitialize)(this.pbImage)).EndInit();
       this.ResumeLayout(false);
 

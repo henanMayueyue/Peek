@@ -11,6 +11,8 @@ namespace Peek {
     List<string> files = new List<string>();
     bool fullScreen = false;
     Image image = null;
+    int offsetX = 0;
+    int offsetY = 0;
     bool originalSize = false;
     int screenIndex = 0;
 
@@ -85,6 +87,41 @@ namespace Peek {
     private void fmMain_Load(object sender, EventArgs e) {
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
       this.setWindowSize();
+    }
+
+    /// <summary>
+    /// Implements event_MouseDown().
+    /// </summary>
+    private void pbImage_MouseDown(object sender, MouseEventArgs e) {
+      if (e.Button == System.Windows.Forms.MouseButtons.Left) {
+        this.offsetX = e.X;
+        this.offsetY = e.Y;
+
+        this.Cursor = Cursors.NoMove2D;
+      }
+    }
+
+    /// <summary>
+    /// Implements event_MouseMove().
+    /// </summary>
+    private void pbImage_MouseMove(object sender, MouseEventArgs e) {
+      if (e.Button == System.Windows.Forms.MouseButtons.Left) {
+        Point p = this.PointToClient(Cursor.Position);
+
+        int newX = p.X - this.offsetX;
+        int newY = p.Y - this.offsetY;
+
+        this.pbImage.Location = new Point(
+          newX,
+          newY);
+      }
+    }
+
+    /// <summary>
+    /// Implements event_MouseUp().
+    /// </summary>
+    private void pbImage_MouseUp(object sender, MouseEventArgs e) {
+      this.Cursor = Cursors.Default;
     }
 
     /// <summary>
