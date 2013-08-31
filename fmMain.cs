@@ -38,7 +38,7 @@ namespace Peek {
           break;
 
         case Keys.Delete:
-          this.deleteFile();
+          this.deleteFile(e.Shift);
           break;
 
         case Keys.W:
@@ -58,6 +58,7 @@ namespace Peek {
           this.toggleFullScreen();
           break;
 
+        case Keys.D0:
         case Keys.D1:
         case Keys.D2:
         case Keys.D3:
@@ -84,7 +85,7 @@ namespace Peek {
     /// <summary>
     /// Moves the selected file to the Recyclin Bin.
     /// </summary>
-    private void deleteFile() {
+    private void deleteFile(bool force) {
       if (this.files.Count > 0) {
         int position = -1;
 
@@ -104,7 +105,10 @@ namespace Peek {
           this.image = null;
 
           try {
-            FileIO.MoveToRecycleBin(this.filepath);
+            if (force)
+              File.Delete(this.filepath);
+            else
+              FileIO.MoveToRecycleBin(this.filepath);
           }
           catch (Exception ex) {
             MessageBox.Show(ex.Message);
