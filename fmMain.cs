@@ -9,6 +9,7 @@ namespace Peek {
   public partial class fmMain : Form {
     string filepath = "";
     List<string> files = new List<string>();
+    bool fullScreen = false;
     Image image = null;
 
     /// <summary>
@@ -47,6 +48,14 @@ namespace Peek {
         case Keys.Escape:
           Application.Exit();
           break;
+
+        case Keys.Enter:
+          if (e.Alt) { this.toggleFullScreen(); }
+          break;
+
+        case Keys.F:
+          this.toggleFullScreen();
+          break;
       }
     }
 
@@ -55,35 +64,7 @@ namespace Peek {
     /// </summary>
     private void fmMain_Load(object sender, EventArgs e) {
       this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-
-      int screenHeight = 0;
-      int screenLeft = 0;
-      int screenTop = 0;
-      int screenWidth = 0;
-
-      foreach (Screen screen in Screen.AllScreens) {
-        if (MousePosition.X >= screen.Bounds.Left &&
-            MousePosition.X <= (screen.Bounds.Left + screen.Bounds.Width) &&
-            MousePosition.Y >= screen.Bounds.Top &&
-            MousePosition.Y <= (screen.Bounds.Top + screen.Bounds.Height)) {
-              screenHeight = screen.WorkingArea.Height;
-              screenLeft = screen.WorkingArea.Left;
-              screenTop = screen.WorkingArea.Top;
-              screenWidth = screen.WorkingArea.Width;
-
-              break;
-        }
-      }
-
-      this.Location = new Point(
-        screenLeft,
-        screenTop);
-
-      this.Size = new Size(
-        screenWidth,
-        screenHeight);
-
-      this.loadImageFromArguments();
+      this.setWindowSize();
     }
 
     /// <summary>
@@ -277,6 +258,58 @@ namespace Peek {
         this.filepath = temp;
         this.loadImageFromArguments();
       }
+    }
+
+    /// <summary>
+    /// Sets the main window size based on settings.
+    /// </summary>
+    private void setWindowSize() {
+      int screenHeight = 0;
+      int screenLeft = 0;
+      int screenTop = 0;
+      int screenWidth = 0;
+
+      foreach (Screen screen in Screen.AllScreens)
+      {
+        if (MousePosition.X >= screen.Bounds.Left &&
+            MousePosition.X <= (screen.Bounds.Left + screen.Bounds.Width) &&
+            MousePosition.Y >= screen.Bounds.Top &&
+            MousePosition.Y <= (screen.Bounds.Top + screen.Bounds.Height))
+        {
+          if (this.fullScreen) {
+            screenHeight = screen.Bounds.Height;
+            screenLeft = screen.Bounds.Left;
+            screenTop = screen.Bounds.Top;
+            screenWidth = screen.Bounds.Width;
+          }
+          else {
+            screenHeight = screen.WorkingArea.Height;
+            screenLeft = screen.WorkingArea.Left;
+            screenTop = screen.WorkingArea.Top;
+            screenWidth = screen.WorkingArea.Width;
+          }
+
+          break;
+        }
+      }
+
+      this.Location = new Point(
+        screenLeft,
+        screenTop);
+
+      this.Size = new Size(
+        screenWidth,
+        screenHeight);
+
+      this.loadImageFromArguments();
+    }
+
+    /// <summary>
+    /// Toggles between maximized window and full screen.
+    /// </summary>
+    private void toggleFullScreen() {
+      this.fullScreen = !this.fullScreen;
+      this.setWindowSize();
     }
   }
 }
