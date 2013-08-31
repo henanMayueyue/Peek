@@ -87,8 +87,6 @@ namespace Peek {
             this.PointToClient(Cursor.Position));
           break;
       }
-
-      this.Text = e.KeyCode.ToString();
     }
 
     /// <summary>
@@ -454,11 +452,8 @@ namespace Peek {
     /// Implements event_Click().
     /// </summary>
     private void aboutPeekToolStripMenuItem_Click(object sender, EventArgs e) {
-      MessageBox.Show(
-        "Peek",
-        "About",
-        MessageBoxButtons.OK,
-        MessageBoxIcon.Information);
+      fmAbout about = new fmAbout();
+      about.ShowDialog(this);
     }
 
     /// <summary>
